@@ -8,12 +8,21 @@ namespace Lab7
     {
         static void Main(string[] args)
         {
-            List<string> incorectWords = CheckOnTypos(Console.ReadLine());
-            foreach (var word in incorectWords)
+            Dictionary<string, List<string>> typosAndOffers = CheckOnTypos(Console.ReadLine());
+            foreach (var word in typosAndOffers.Keys)
             {
-                Console.WriteLine(word);
+                Console.WriteLine($"incorrect: {word}");
+                foreach (var offer in typosAndOffers[word])
+                {
+                    Console.WriteLine(offer);
+                }
             }
-            Console.WriteLine(incorectWords.Count);
+            
+            Console.WriteLine(typosAndOffers.Keys.Count);
+
+            //Console.WriteLine(FindLCS("wednesday", "endlessly"));
         }
     }
 }
+
+// wednessay was guite goot

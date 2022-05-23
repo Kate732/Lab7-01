@@ -7,29 +7,27 @@ namespace Lab7
 {
     public class Check
     {
-        public static List<string> CheckOnTypos(string str)
+        public static Dictionary<string, List<string>> CheckOnTypos(string str)
         {
             List<string> glossary = File.ReadLines("words_list.txt").ToList();
             string[] wordsFromInput = ConvertToArrayOfWords(str);
             Dictionary<string, List<string>> typoToOffers = new Dictionary<string, List<string>>();
-            List<string> typos = new List<string>();
-            List<string> offers = new List<string>();
             foreach (var word in wordsFromInput)
             {
                 if (glossary.Contains(word) == false)
                 {
-                    typos.Add(word);
+                    typoToOffers[word] = new List<string>();
                     foreach (var correctWord in glossary)
                     {
                         if (FindLCS(word, correctWord) >= word.Length - 1)
                         {
-                            offers.Add(correctWord);
+                            typoToOffers[word].Add(correctWord);
                         }
                     }
                 }
             }
 
-            return offers;
+            return typoToOffers;
         }
 
 
@@ -46,27 +44,20 @@ namespace Lab7
             int mistypedLen = misstipedWord.Length;
             int offeredLen = offeredWord.Length;
             int[,] tableLCS = new int[mistypedLen + 1, offeredLen + 1];
-            for (int m = 0; m <= mistypedLen; m++)
-            {
-                tableLCS[m, 0] = 0;
-            }
+            
+            // first row and first column are expected to be filled with 0
 
-            for (int o = 0; o <= offeredLen; o++)
+            for (int m = 1; m <= mistypedLen; m++)
             {
-                tableLCS[0, o] = 0;
-            }
-
-            for (int m = 0; m <= mistypedLen; m++)
-            {
-                for (int o = 0; o <= offeredLen; o++)
+                for (int o = 1; o <= offeredLen; o++)
                 {
-                    if (misstipedWord[m] == offeredWord[o])
+                    if (misstipedWord[m - 1] == offeredWord[o - 1])
                     {
-                        tableLCS[m + 1, o + 1] = tableLCS[m, o] + 1;
+                        tableLCS[m, o] = tableLCS[m - 1, o - 1] + 1;
                     }
                     else
                     {
-                        tableLCS[m + 1, o + 1] = Math.Max(tableLCS[m + 1, o], tableLCS[m - 1, o]);
+                        tableLCS[m, o] = Math.Max(tableLCS[m - 1, o], tableLCS[m, o - 1]);
                     }
                 }
             }
