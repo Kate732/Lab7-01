@@ -25,4 +25,4 @@ namespace Lab7
     }
 }
 
-// wednessay was guite goot
+// wednessay was quita goos

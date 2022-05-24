@@ -16,20 +16,53 @@ namespace Lab7
             {
                 if (glossary.Contains(word) == false)
                 {
-                    typoToOffers[word] = new List<string>();
-                    foreach (var correctWord in glossary)
-                    {
-                        if (FindLCS(word, correctWord) >= word.Length - 1)
-                        {
-                            typoToOffers[word].Add(correctWord);
-                        }
-                    }
+                    typoToOffers[word] = new List<string>(); 
+                    typoToOffers[word] = GetFiveOfferedWords(word, glossary);
                 }
             }
 
             return typoToOffers;
         }
+        
+        private static List<string> GetFiveOfferedWords(string wrongWord, List<string> glossary)
+        {
+            List<string> fiveOfferedWords = new List<string>(5);
+            Dictionary<string, int> wordsAndValues = new Dictionary<string, int>();
+            foreach(var correctWord in glossary)
+            {
+                int lcsOfTheOfferedWord = FindLCS(wrongWord, correctWord);
+                bool needToBeAdded = DoesWordNeedToBeAdded(wordsAndValues, wrongWord, correctWord);
+                if (needToBeAdded)
+                {
+                    wordsAndValues[correctWord] = FindLCS(wrongWord, correctWord);
+                }
+            }
+            foreach (var key in wordsAndValues.Keys)
+            {
+                fiveOfferedWords.Add(key);
+            }
 
+            return fiveOfferedWords;
+        }
+
+        private static bool DoesWordNeedToBeAdded(Dictionary<string, int> wordsAndValues, string wrongWord, string correctWord)
+        {
+            bool needToBeAdded = false;
+            int lcsOfTheOfferedWord = FindLCS(wrongWord, correctWord);
+            if (wordsAndValues.Keys.Count < 5)
+            {
+                return true;
+            }
+            foreach (var key in wordsAndValues.Keys)
+            {
+                if (lcsOfTheOfferedWord > wordsAndValues[key] && Math.Abs(wrongWord.Length - correctWord.Length) <= 2)
+                {
+                    needToBeAdded = true;
+                    wordsAndValues.Remove(key);
+                }
+            }
+            return needToBeAdded;
+        }
 
         public static int FindLCS(string misstipedWord, string offeredWord)
         {
