@@ -8,6 +8,7 @@ namespace Lab7
     {
         static void Main(string[] args)
         {
+            /*
             Dictionary<string, List<string>> typosAndOffers = CheckOnTypos(Console.ReadLine());
             foreach (var word in typosAndOffers.Keys)
             {
@@ -19,8 +20,8 @@ namespace Lab7
             }
             
             Console.WriteLine(typosAndOffers.Keys.Count);
-
-            //Console.WriteLine(FindLCS("wednesday", "endlessly"));
+            */
+            Console.WriteLine(FindLCS("good", "kood"));
         }
     }
 }

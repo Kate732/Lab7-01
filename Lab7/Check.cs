@@ -16,7 +16,6 @@ namespace Lab7
             {
                 if (glossary.Contains(word) == false)
                 {
-                    typoToOffers[word] = new List<string>(); 
                     typoToOffers[word] = GetFiveOfferedWords(word, glossary);
                 }
             }
@@ -26,28 +25,23 @@ namespace Lab7
         
         private static List<string> GetFiveOfferedWords(string wrongWord, List<string> glossary)
         {
-            List<string> fiveOfferedWords = new List<string>(5);
             Dictionary<string, int> wordsAndValues = new Dictionary<string, int>();
             foreach(var correctWord in glossary)
             {
-                int lcsOfTheOfferedWord = FindLCS(wrongWord, correctWord);
                 bool needToBeAdded = DoesWordNeedToBeAdded(wordsAndValues, wrongWord, correctWord);
                 if (needToBeAdded)
                 {
                     wordsAndValues[correctWord] = FindLCS(wrongWord, correctWord);
                 }
             }
-            foreach (var key in wordsAndValues.Keys)
-            {
-                fiveOfferedWords.Add(key);
-            }
+            List<string> fiveOfferedWords = new List<string>(wordsAndValues.Keys);
 
             return fiveOfferedWords;
         }
 
         private static bool DoesWordNeedToBeAdded(Dictionary<string, int> wordsAndValues, string wrongWord, string correctWord)
         {
-            bool needToBeAdded = false;
+            string minValueOfKey = null;
             int lcsOfTheOfferedWord = FindLCS(wrongWord, correctWord);
             if (wordsAndValues.Keys.Count < 5)
             {
@@ -55,15 +49,23 @@ namespace Lab7
             }
             foreach (var key in wordsAndValues.Keys)
             {
-                if (lcsOfTheOfferedWord > wordsAndValues[key] && Math.Abs(wrongWord.Length - correctWord.Length) <= 2)
+                if (minValueOfKey == null || wordsAndValues[key] < wordsAndValues[minValueOfKey])
                 {
-                    needToBeAdded = true;
-                    wordsAndValues.Remove(key);
+                    minValueOfKey = key;
                 }
             }
-            return needToBeAdded;
+
+            if (minValueOfKey != null && wordsAndValues[minValueOfKey] < lcsOfTheOfferedWord)
+            {
+                wordsAndValues.Remove(minValueOfKey);
+                return true;
+            }
+            
+            return false;
         }
 
+        //  && Math.Abs(wrongWord.Length - correctWord.Length) <= 2
+        
         public static int FindLCS(string misstipedWord, string offeredWord)
         {
             // wednesday & endlessly => 5 (edesy)
